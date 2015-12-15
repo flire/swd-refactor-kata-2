@@ -15,6 +15,6 @@ public class Rental
         return movie;
     }
 
-    private Movie movie;
+    private final Movie movie;
     private int daysRented;
 }

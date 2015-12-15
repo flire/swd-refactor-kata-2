@@ -7,19 +7,15 @@ public class Movie
     public static final int NEW_RELEASE = 1;
 
     private String title;
-    private int priceCode;
+    private MovieType type;
 
-    public Movie (String title, int priceCode) {
+    public Movie (String title, MovieType type) {
         this.title      = title;
-        this.priceCode  = priceCode;
+        this.type  = type;
     }
 
-    public int getPriceCode () {
-        return priceCode;
-    }
-
-    public void setPriceCode (int code) {
-        priceCode = code;
+    public MovieType getMovieType () {
+        return type;
     }
 
     public String getTitle () {
