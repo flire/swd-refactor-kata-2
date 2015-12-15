@@ -12,7 +12,6 @@ improve design to achieve your goal.
 In this kata you refactor video store domain model using existing tests.
 Make code as simple and readable as it is just possible.
 
-
 3. Mars Rover (0..2 points)
 ---------------------------
 Create mars rover implementation based on existing RoverSpec.
