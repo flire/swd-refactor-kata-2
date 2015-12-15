@@ -1,5 +1,7 @@
 package task1;
 
+import generators.ConnectionSuccessGenerator;
+
 public class TelemetryDiagnosticControls
 {
   private final String DiagnosticChannelConnectionString = "*111#";
@@ -7,20 +9,20 @@ public class TelemetryDiagnosticControls
   private final TelemetryClient telemetryClient;
   private String diagnosticInfo = "";
 
-  public TelemetryDiagnosticControls()
+  public TelemetryDiagnosticControls(ConnectionSuccessGenerator generator)
   {
-    telemetryClient = new TelemetryClient();
+    telemetryClient = new TelemetryClient(generator);
   }
 
   public String getDiagnosticInfo(){
     return diagnosticInfo;
   }
 
-  public void setDiagnosticInfo(String diagnosticInfo){
+  protected void setDiagnosticInfo(String diagnosticInfo){
     this.diagnosticInfo = diagnosticInfo;
   }
 
-  public void checkTransmission() throws Exception
+  public boolean checkTransmission()
   {
     diagnosticInfo = "";
 
@@ -35,10 +37,14 @@ public class TelemetryDiagnosticControls
 
     if(telemetryClient.getOnlineStatus() == false)
     {
-      throw new Exception("Unable to connect.");
+      return false;
     }
-
-    telemetryClient.send(TelemetryClient.DIAGNOSTIC_MESSAGE);
-    diagnosticInfo = telemetryClient.receive();
+    try {
+	    telemetryClient.send(TelemetryClient.DIAGNOSTIC_MESSAGE);
+	    diagnosticInfo = telemetryClient.receive();
+    } catch (IllegalArgumentException e) {
+    	return false;
+    }
+    return true;
   }
 }

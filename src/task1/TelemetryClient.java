@@ -2,14 +2,20 @@ package task1;
 
 import java.util.Random;
 
+import generators.ConnectionSuccessGenerator;
+
 public class TelemetryClient
 {
   public static final String DIAGNOSTIC_MESSAGE = "AT#UD";
 
   private boolean onlineStatus;
   private String diagnosticMessageResult = "";
+  
+  public TelemetryClient(ConnectionSuccessGenerator generator) {
+	  this.connectionEventsSimulator = generator;
+  }
 
-  private final Random connectionEventsSimulator = new Random(42);
+  private ConnectionSuccessGenerator connectionEventsSimulator;
 
   public boolean getOnlineStatus()
   {
@@ -24,7 +30,7 @@ public class TelemetryClient
     }
 
     // simulate the operation on a real modem
-    boolean success = connectionEventsSimulator.nextInt(10) <= 8;
+    boolean success = connectionEventsSimulator.getNextResult();
 
     onlineStatus = success;
   }
