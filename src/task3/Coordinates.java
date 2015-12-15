@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Coordinates {
-	private static final String POINT_FORMAT = "%d x %d %c";
+	private static final String POINT_FORMAT = "%d X %d %c";
 
 	public Point getX() {
 		return x;
@@ -26,7 +26,7 @@ public class Coordinates {
 		obstacles = new ArrayList<>(value);
 	}
 	
-	protected void moveAlong(int axis, int direction) {
+	private void moveAlong(int axis, int direction) {
 		if (hasObstacleAtCurrentPoint()) return;
 		Point axisPoint;
 		if (axis == 0) {
@@ -74,6 +74,23 @@ public class Coordinates {
 			break;
 		case WEST:
 			direction = Direction.NORTH;
+			break;
+		}
+	}
+	
+	protected void move(int delta) {
+		switch(direction) {
+		case NORTH:
+			moveAlong(1, delta);
+			break;
+		case SOUTH:
+			moveAlong(1, -delta);
+			break;
+		case EAST:
+			moveAlong(0, delta);
+			break;
+		case WEST:
+			moveAlong(0, -delta);
 			break;
 		}
 	}
