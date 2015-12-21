@@ -1,50 +1,39 @@
 package task1;
 
-import generators.ConnectionSuccessGenerator;
+public class TelemetryDiagnosticControls {
+	private final String DiagnosticChannelConnectionString = "*111#";
 
-public class TelemetryDiagnosticControls
-{
-  private final String DiagnosticChannelConnectionString = "*111#";
+	private final TelemetryClient telemetryClient;
+	private String diagnosticInfo = "";
 
-  private final TelemetryClient telemetryClient;
-  private String diagnosticInfo = "";
+	public TelemetryDiagnosticControls(TelemetryClient client) {
+		telemetryClient = client;
+	}
 
-  public TelemetryDiagnosticControls(ConnectionSuccessGenerator generator)
-  {
-    telemetryClient = new TelemetryClient(generator);
-  }
+	public String getDiagnosticInfo() {
+		return diagnosticInfo;
+	}
 
-  public String getDiagnosticInfo(){
-    return diagnosticInfo;
-  }
+	protected void setDiagnosticInfo(String diagnosticInfo) {
+		this.diagnosticInfo = diagnosticInfo;
+	}
 
-  protected void setDiagnosticInfo(String diagnosticInfo){
-    this.diagnosticInfo = diagnosticInfo;
-  }
+	public void checkTransmission() throws Exception {
+		diagnosticInfo = "";
 
-  public boolean checkTransmission()
-  {
-    diagnosticInfo = "";
+		telemetryClient.disconnect();
 
-    telemetryClient.disconnect();
+		int retryLeft = 3;
+		while (telemetryClient.getOnlineStatus() == false && retryLeft > 0) {
+			telemetryClient.connect(DiagnosticChannelConnectionString);
+			retryLeft -= 1;
+		}
 
-    int retryLeft = 3;
-    while (telemetryClient.getOnlineStatus() == false && retryLeft > 0)
-    {
-      telemetryClient.connect(DiagnosticChannelConnectionString);
-      retryLeft -= 1;
-    }
+		if (telemetryClient.getOnlineStatus() == false) {
+			throw new Exception("Unable to connect.");
+		}
 
-    if(telemetryClient.getOnlineStatus() == false)
-    {
-      return false;
-    }
-    try {
-	    telemetryClient.send(TelemetryClient.DIAGNOSTIC_MESSAGE);
-	    diagnosticInfo = telemetryClient.receive();
-    } catch (IllegalArgumentException e) {
-    	return false;
-    }
-    return true;
-  }
+		telemetryClient.send(TelemetryClient.DIAGNOSTIC_MESSAGE);
+		diagnosticInfo = telemetryClient.receive();
+	}
 }
