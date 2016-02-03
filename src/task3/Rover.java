@@ -5,7 +5,7 @@ public class Rover {
 	private static final char BACKWARD = 'b';
 	private static final char LEFT = 'l';
 	private static final char RIGHT = 'r';
-	private static final String NOK_STATUS = " NOK";
+	private static final String NOK_STATUS = "NOK";
 	private final Coordinates coordinates;
 
 	public Rover(Coordinates coordinates) {
@@ -22,10 +22,10 @@ public class Rover {
 		}
 		switch (Character.toLowerCase(command)) {
 		case FORWARD:
-			coordinates.move(1);
+			coordinates.moveForward();
 			break;
 		case BACKWARD:
-			coordinates.move(-1);
+			coordinates.moveBackwards();
 			break;
 		case LEFT:
 			coordinates.turnLeft();

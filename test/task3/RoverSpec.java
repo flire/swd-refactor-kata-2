@@ -26,49 +26,49 @@ public class RoverSpec {
   }
 
   @Test
-  public void newInstanceShouldSetRoverCoordinatesAndDirection() {
+  public void testInitialCoordinatesAreSet() {
     assertEquals(roverCoordinates, rover.getCoordinates());
   }
 
   @Test
-  public void receiveSingleCommandShouldMoveForwardWhenCommandIsF() throws Exception {
-    int expected = y.getLocation() + 1;
+  public void testMoveForward() throws Exception {
+    int expected = y.getLocation() - 1;
     rover.receiveSingleCommand('F');
     assertEquals(expected, rover.getCoordinates().getY().getLocation());
   }
 
   @Test
-  public void receiveSingleCommandShouldMoveBackwardWhenCommandIsB() throws Exception {
-    int expected = y.getLocation() - 1;
+  public void testMoveBackwards() throws Exception {
+    int expected = y.getLocation() + 1;
     rover.receiveSingleCommand('B');
     assertEquals(expected, rover.getCoordinates().getY().getLocation());
   }
 
   @Test
-  public void receiveSingleCommandShouldTurnLeftWhenCommandIsL() throws Exception {
+  public void testTurnLeft() throws Exception {
     rover.receiveSingleCommand('L');
     assertEquals(Direction.WEST, rover.getCoordinates().getDirection());
   }
 
   @Test
-  public void receiveSingleCommandShouldTurnRightWhenCommandIsR() throws Exception {
+  public void testTurnRight() throws Exception {
     rover.receiveSingleCommand('R');
     assertEquals(Direction.EAST, rover.getCoordinates().getDirection());
   }
 
   @Test
-  public void receiveSingleCommandShouldIgnoreCase() throws Exception {
+  public void testCommandIgnoreCase() throws Exception {
     rover.receiveSingleCommand('r');
     assertEquals(Direction.EAST, rover.getCoordinates().getDirection());
   }
 
   @Test(expected = Exception.class)
-  public void receiveSingleCommandShouldThrowExceptionWhenCommandIsUnknown() throws Exception {
+  public void testUnknownCommand() throws Exception {
     rover.receiveSingleCommand('X');
   }
 
   @Test
-  public void receiveCommandsShouldBeAbleToReceiveMultipleCommands() throws Exception {
+  public void testMultipleCommands() throws Exception {
     int expected = x.getLocation() + 1;
     rover.receiveCommands("RFR");
     assertEquals(expected, rover.getCoordinates().getX().getLocation());
@@ -76,16 +76,16 @@ public class RoverSpec {
   }
 
   @Test
-  public void receiveCommandShouldWhatFromOneEdgeOfTheGridToAnother() throws Exception {
+  public void testMapIsEdgeClosed() throws Exception {
     int expected = x.getMaxLocation() + x.getLocation() - 2;
     rover.receiveCommands("LFFF");
     assertEquals(expected, rover.getCoordinates().getX().getLocation());
   }
 
   @Test
-  public void receiveCommandsShouldStopWhenObstacleIsFound() throws Exception {
+  public void testHaltOnObstacle() throws Exception {
     int expected = x.getLocation() + 1;
-    rover.getCoordinates().setObstacles(Arrays.asList(new Obstacle(expected + 1, y.getLocation())));
+    rover.getCoordinates().setObstacles(Arrays.asList(new Obstacle(expected, y.getLocation())));
     rover.getCoordinates().setDirection(Direction.EAST);
     rover.receiveCommands("FFFRF");
     assertEquals(expected, rover.getCoordinates().getX().getLocation());
@@ -93,16 +93,16 @@ public class RoverSpec {
   }
 
   @Test
-  public void positionShouldReturnXYAndDirection() throws Exception {
+  public void testPositionFormat() throws Exception {
     rover.receiveCommands("LFFFRFF");
-    assertEquals("8 X 4 N", rover.getPosition());
+    assertEquals("8 X 0 N", rover.getPosition());
   }
 
   @Test
-  public void positionShouldReturnNokWhenObstacleIsFound() throws Exception {
+  public void testNOKOnObstacle() throws Exception {
     rover.getCoordinates().setObstacles(Arrays.asList(new Obstacle(x.getLocation() + 1, y.getLocation())));
     rover.getCoordinates().setDirection(Direction.EAST);
     rover.receiveCommands("F");
-    assertEquals(" NOK", rover.getPosition());
+    assertEquals("NOK", rover.getPosition());
   }
 }

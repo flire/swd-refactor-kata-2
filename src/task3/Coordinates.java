@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Coordinates {
+	private static final int STEP_BACKWARDS = -1;
+	private static final int STEP_FORWARD = 1;
 	private static final String POINT_FORMAT = "%d X %d %c";
 
 	public Point getX() {
@@ -25,73 +27,39 @@ public class Coordinates {
 	public void setObstacles(List<Obstacle> value) {
 		obstacles = new ArrayList<>(value);
 	}
-	
-	private void moveAlong(int axis, int direction) {
-		if (hasObstacleAtCurrentPoint()) return;
-		Point axisPoint;
-		if (axis == 0) {
-			axisPoint = x;
-		} else {
-			axisPoint = y;
-		}
-		
-		axisPoint.setLocation(axisPoint.getLocation() + direction);
-		if (axisPoint.getLocation() < 0) {
-			axisPoint.setLocation(axisPoint.getMaxLocation());
-		}
-		if (axisPoint.getLocation() > axisPoint.getMaxLocation()) {
-			axisPoint.setLocation(0);
-		}
+
+	public void turnLeft() {
+		direction = direction.turnLeft();
 	}
-	
-	protected void turnLeft() {
-		switch(direction) {
-		case NORTH:
-			direction = Direction.WEST;
-			break;
-		case SOUTH:
-			direction = Direction.EAST;
-			break;
-		case EAST:
-			direction = Direction.NORTH;
-			break;
-		case WEST:
-			direction = Direction.SOUTH;
-			break;
-		}
-	}
-	
+
 	protected void turnRight() {
-		switch(direction) {
-		case NORTH:
-			direction = Direction.EAST;
-			break;
-		case SOUTH:
-			direction = Direction.WEST;
-			break;
-		case EAST:
-			direction = Direction.SOUTH;
-			break;
-		case WEST:
-			direction = Direction.NORTH;
-			break;
-		}
+		direction = direction.turnRight();
 	}
-	
+
+	public void moveForward() {
+		move(STEP_FORWARD);
+	}
+
+	public void moveBackwards() {
+		move(STEP_BACKWARDS);
+	}
+
 	protected void move(int delta) {
-		switch(direction) {
+		switch (direction) {
 		case NORTH:
-			moveAlong(1, delta);
+			y.subtract(delta);
 			break;
 		case SOUTH:
-			moveAlong(1, -delta);
+			y.add(delta);
 			break;
 		case EAST:
-			moveAlong(0, delta);
+			x.add(delta);
 			break;
 		case WEST:
-			moveAlong(0, -delta);
+			x.subtract(delta);
 			break;
+		default:
+			throw new RuntimeException("Unknown direction");
 		}
 	}
 

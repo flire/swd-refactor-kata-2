@@ -13,6 +13,7 @@ public class TelemetryDiagnosticControlsTest {
 		ConnectionSuccessGenerator mock = mock(ConnectionSuccessGenerator.class);
 		when(mock.getNextResult()).thenReturn(false);
 		TelemetryDiagnosticControls telemetryDiagnosticControls = new TelemetryDiagnosticControls(new TelemetryClient(mock));
+
 		telemetryDiagnosticControls.checkTransmission();
 	}
 	
@@ -20,10 +21,11 @@ public class TelemetryDiagnosticControlsTest {
 	public void testDataSendingAtThirdSuccess() throws Exception {
 		ConnectionSuccessGenerator mockGenerator = mock(ConnectionSuccessGenerator.class);
 		when(mockGenerator.getNextResult()).thenReturn(false, false, true);
-		TelemetryClient realClient = new TelemetryClient(mockGenerator);
-		TelemetryClient spy = spy(realClient);
+		TelemetryClient spy = getSpyClient(mockGenerator);
 		TelemetryDiagnosticControls telemetryDiagnosticControls = new TelemetryDiagnosticControls(spy);
+		
 		telemetryDiagnosticControls.checkTransmission();
+		
 		verify(spy).send(anyString());
 	}
 	
@@ -31,10 +33,11 @@ public class TelemetryDiagnosticControlsTest {
 	public void testDataSendingAtSecondSuccess() throws Exception {
 		ConnectionSuccessGenerator mockGenerator = mock(ConnectionSuccessGenerator.class);
 		when(mockGenerator.getNextResult()).thenReturn(false, true);
-		TelemetryClient realClient = new TelemetryClient(mockGenerator);
-		TelemetryClient spy = spy(realClient);
+		TelemetryClient spy = getSpyClient(mockGenerator);
 		TelemetryDiagnosticControls telemetryDiagnosticControls = new TelemetryDiagnosticControls(spy);
+		
 		telemetryDiagnosticControls.checkTransmission();
+		
 		verify(spy).send(anyString());
 	}
 	
@@ -42,10 +45,11 @@ public class TelemetryDiagnosticControlsTest {
 	public void testDataSendingAtFirstSuccess() throws Exception {
 		ConnectionSuccessGenerator mockGenerator = mock(ConnectionSuccessGenerator.class);
 		when(mockGenerator.getNextResult()).thenReturn(true);
-		TelemetryClient realClient = new TelemetryClient(mockGenerator);
-		TelemetryClient spy = spy(realClient);
+		TelemetryClient spy = getSpyClient(mockGenerator);
 		TelemetryDiagnosticControls telemetryDiagnosticControls = new TelemetryDiagnosticControls(spy);
+		
 		telemetryDiagnosticControls.checkTransmission();
+		
 		verify(spy).send(anyString());
 	}
 	
@@ -53,10 +57,11 @@ public class TelemetryDiagnosticControlsTest {
 	public void testDisconnectCalled() throws Exception {
 		ConnectionSuccessGenerator mockGenerator = mock(ConnectionSuccessGenerator.class);
 		when(mockGenerator.getNextResult()).thenReturn(true);
-		TelemetryClient realClient = new TelemetryClient(mockGenerator);
-		TelemetryClient spy = spy(realClient);
+		TelemetryClient spy = getSpyClient(mockGenerator);
 		TelemetryDiagnosticControls telemetryDiagnosticControls = new TelemetryDiagnosticControls(spy);
+	
 		telemetryDiagnosticControls.checkTransmission();
+		
 		verify(spy).disconnect();
 	}
 	
@@ -66,7 +71,14 @@ public class TelemetryDiagnosticControlsTest {
 		when(mockGenerator.getNextResult()).thenReturn(true);
 		TelemetryClient realClient = new TelemetryClient(mockGenerator);
 		TelemetryDiagnosticControls telemetryDiagnosticControls = new TelemetryDiagnosticControls(realClient);
+		
 		telemetryDiagnosticControls.checkTransmission();
+		
 		assertEquals(TelemetryClient.TEST_DIAGNOSTIC_MESSAGE_RESULT,telemetryDiagnosticControls.getDiagnosticInfo());
+	}
+	
+	private static TelemetryClient getSpyClient(ConnectionSuccessGenerator successGenerator) {
+		TelemetryClient realClient = new TelemetryClient(successGenerator);
+		return spy(realClient);
 	}
 }
